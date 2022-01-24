@@ -106,6 +106,7 @@ import org.chromium.chrome.browser.compositor.layouts.LayoutManagerImpl;
 import org.chromium.chrome.browser.compositor.layouts.phone.StackLayout;
 import org.chromium.chrome.browser.crypto_wallet.BraveWalletServiceFactory;
 import org.chromium.chrome.browser.crypto_wallet.activities.BraveWalletActivity;
+import org.chromium.chrome.browser.crypto_wallet.util.Utils;
 import org.chromium.chrome.browser.dependency_injection.ChromeActivityComponent;
 import org.chromium.chrome.browser.flags.ChromeFeatureList;
 import org.chromium.chrome.browser.flags.ChromeSwitches;
@@ -336,12 +337,18 @@ public abstract class BraveActivity<C extends ChromeActivityComponent> extends C
         assert layout != null;
         if (layout != null) {
             layout.showWalletIcon(true);
+            layout.showWalletPanel();
         }
     }
 
     @Override
     public void onShowWalletOnboarding() {
-        openBraveWallet();
+        BraveToolbarLayoutImpl layout = (BraveToolbarLayoutImpl) findViewById(R.id.toolbar);
+        assert layout != null;
+        if (layout != null) {
+            layout.showWalletIcon(true);
+            layout.showWalletPanel();
+        }
     }
 
     private void verifySubscription() {
@@ -815,8 +822,9 @@ public abstract class BraveActivity<C extends ChromeActivityComponent> extends C
         settingsLauncher.launchSettingsActivity(this, BraveNewsPreferences.class);
     }
 
-    private void openBraveWallet() {
+    public void openBraveWallet() {
         Intent braveWalletIntent = new Intent(this, BraveWalletActivity.class);
+        braveWalletIntent.putExtra(Utils.IS_FROM_DAPPS, true);
         braveWalletIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(braveWalletIntent);
     }
