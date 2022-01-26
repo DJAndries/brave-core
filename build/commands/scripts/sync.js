@@ -78,6 +78,9 @@ async function RunCommand () {
     if (process.platform === 'win32' || process.platform === 'linux') {
       util.runGit(
           config.rootDir, ['config', '--global', 'checkout.workers', 16], false)
+      util.runGit(
+          config.rootDir, ['config', '--global', '--unset', 'checkout.workers'],
+          false)
     }
     console.log(
         'gitcache size before sync',
