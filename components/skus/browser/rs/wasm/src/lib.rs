@@ -56,6 +56,8 @@ pub fn initialize(
     env: String,
     remote_sdk: Option<bool>,
     log_level: Option<String>,
+    base_url: Option<String>,
+    remote_sdk_url: Option<String>,
 ) -> js_sys::Promise {
     let future = async move {
         console_error_panic_hook::set_once();
@@ -93,8 +95,8 @@ pub fn initialize(
                     })),
                 },
                 env,
-                None,
-                None,
+                base_url,
+                remote_sdk_url,
             );
             sdk.initialize().await;
 
