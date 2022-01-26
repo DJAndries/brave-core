@@ -76,6 +76,7 @@ function Container (props: Props) {
   const { pathname: walletLocation } = useLocation()
   // Wallet Props
   const {
+    isFilecoinEnabled,
     isWalletCreated,
     isWalletLocked,
     isWalletBackedUp,
@@ -621,6 +622,7 @@ function Container (props: Props) {
                 onCreateAccount={onCreateAccount}
                 onImportAccount={onImportAccount}
                 onImportFilecoinAccount={onImportFilecoinAccount}
+                isFilecoinEnabled={isFilecoinEnabled}
                 isLoading={isFetchingPriceHistory}
                 showAddModal={showAddModal}
                 onHideAddModal={onHideAddModal}

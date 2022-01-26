@@ -498,10 +498,6 @@ HDKeyring* KeyringService::CreateKeyring(const std::string& keyring_id,
     VLOG(1) << "Unknown keyring id " << keyring_id;
     return nullptr;
   }
-  if (keyring_id == mojom::kFilecoinKeyringId) {
-    DLOG(INFO) << "keyring";
-  }
-
   if (!CreateEncryptorForKeyring(password, keyring_id))
     return nullptr;
 
@@ -529,7 +525,8 @@ HDKeyring* KeyringService::ResumeKeyring(const std::string& keyring_id,
     return nullptr;
   }
 
-  const std::string mnemonic = GetMnemonicForKeyringImpl(mojom::kDefaultKeyringId);
+  const std::string mnemonic =
+      GetMnemonicForKeyringImpl(mojom::kDefaultKeyringId);
   bool is_legacy_brave_wallet = false;
   const base::Value* value =
       GetPrefForKeyring(prefs_, kLegacyBraveWallet, keyring_id);
@@ -588,7 +585,8 @@ HDKeyring* KeyringService::RestoreKeyring(const std::string& keyring_id,
 
   // Try getting existing mnemonic first
   if (encryptor_ || CreateEncryptorForKeyring(password, keyring_id)) {
-    const std::string current_mnemonic = GetMnemonicForKeyringImpl(mojom::kDefaultKeyringId);
+    const std::string current_mnemonic =
+        GetMnemonicForKeyringImpl(mojom::kDefaultKeyringId);
     // Restore with same mnmonic and same password, resume current keyring
     // Also need to make sure is_legacy_brave_wallet are the same, users might
     // choose the option wrongly and then want to start over with same mnemonic
@@ -679,7 +677,7 @@ void KeyringService::RestoreWallet(const std::string& mnemonic,
   }
   if (IsFilecoinEnabled()) {
     RestoreKeyring(mojom::kFilecoinKeyringId, mnemonic, password,
-                                    is_legacy_brave_wallet);
+                   is_legacy_brave_wallet);
   }
   // TODO(darkdh): add account discovery mechanism
 
@@ -754,10 +752,7 @@ void KeyringService::ImportFilecoinSECP256K1Account(
     const std::string& private_key_hex,
     const std::string& network,
     ImportFilecoinSECP256K1AccountCallback callback) {
-  if (!IsFilecoinEnabled()) {
-    VLOG(1) << "Filecoin feature is not enabled";
-    return;
-  }
+  DCHECK(IsFilecoinEnabled());
   if (account_name.empty() || private_key_hex.empty() || !encryptor_) {
     std::move(callback).Run(false, "");
     return;
@@ -783,11 +778,7 @@ void KeyringService::ImportFilecoinBLSAccount(
     const std::string& public_key_hex,
     const std::string& network,
     ImportFilecoinBLSAccountCallback callback) {
-  if (!IsFilecoinEnabled()) {
-    VLOG(1) << "Filecoin feature is not enabled";
-    std::move(callback).Run(false, "");
-    return;
-  }
+  DCHECK(IsFilecoinEnabled());
 
   if (account_name.empty() || private_key_hex.empty() ||
       public_key_hex.empty() || !encryptor_) {
@@ -822,7 +813,7 @@ KeyringService::ImportSECP256K1AccountForFilecoinKeyring(
     const std::string& network) {
   auto* keyring = static_cast<FilecoinKeyring*>(
       GetHDKeyringById(mojom::kFilecoinKeyringId));
-  if (!keyring || !IsFilecoinEnabled()) {
+  if (!keyring) {
     return absl::nullopt;
   }
 
@@ -854,7 +845,7 @@ absl::optional<std::string> KeyringService::ImportBLSAccountForFilecoinKeyring(
     const std::string& network) {
   auto* keyring = static_cast<FilecoinKeyring*>(
       GetHDKeyringById(mojom::kFilecoinKeyringId));
-  if (!keyring || !IsFilecoinEnabled()) {
+  if (!keyring) {
     return absl::nullopt;
   }
 
@@ -1422,10 +1413,6 @@ bool KeyringService::CreateKeyringInternal(const std::string& keyring_id,
                                            bool is_legacy_brave_wallet) {
   if (!encryptor_)
     return false;
-
-  if (keyring_id == mojom::kFilecoinKeyringId) {
-    DLOG(INFO) << "keyring";
-  }
 
   std::unique_ptr<std::vector<uint8_t>> seed = nullptr;
   if (is_legacy_brave_wallet)
