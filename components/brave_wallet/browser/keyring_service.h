@@ -315,10 +315,10 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
   void OnAutoLockPreferenceChanged();
   void OnSelectedAccountPreferenceChanged();
 
-  std::unique_ptr<PasswordEncryptor> encryptor_;
   std::unique_ptr<base::OneShotTimer> auto_lock_timer_;
   std::unique_ptr<PrefChangeRegistrar> pref_change_registrar_;
   base::flat_map<std::string, std::unique_ptr<HDKeyring>> keyrings_;
+  base::flat_map<std::string, std::unique_ptr<PasswordEncryptor>> encryptors_;
 
   raw_ptr<PrefService> prefs_ = nullptr;
   bool request_unlock_pending_ = false;
