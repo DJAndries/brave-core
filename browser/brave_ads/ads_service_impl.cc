@@ -40,6 +40,12 @@
 #include "bat/ads/pref_names.h"
 #include "bat/ads/resources/grit/bat_ads_resources.h"
 #include "bat/ads/statement_info.h"
+// #include "brave/browser/brave_federated_learning/brave_federated_learning_service_factory.h"
+// #include "brave/components/brave_federated_learning/brave_federated_learning_features.h"
+// #include "base/threading/sequence_bound.h"
+// #include "brave/components/brave_federated_learning/data_store_service.h"
+// #include "brave/components/brave_federated_learning/data_stores/ad_notification_timing_data_store.h"
+// #include "brave/components/brave_federated_learning/brave_federated_learning_service.h"
 #include "brave/browser/brave_ads/notification_helper/notification_helper.h"
 #include "brave/browser/brave_ads/notifications/ad_notification_platform_bridge.h"
 #include "brave/browser/brave_ads/service_sandbox_type.h"
@@ -232,6 +238,8 @@ AdsServiceImpl::AdsServiceImpl(
       display_service_(NotificationDisplayService::GetForProfile(profile_)),
       rewards_service_(
           brave_rewards::RewardsServiceFactory::GetForProfile(profile_)),
+      // federated_learning_service_(
+      //   brave::BraveFederatedLearningServiceFactory::GetForBrowserContext(profile_)),
       bat_ads_client_receiver_(new bat_ads::AdsClientMojoBridge(this)) {
   DCHECK(profile_);
 #if BUILDFLAG(BRAVE_ADAPTIVE_CAPTCHA_ENABLED)
@@ -2098,6 +2106,82 @@ void AdsServiceImpl::RecordP2AEvent(const std::string& name,
     }
   }
 }
+
+void AdsServiceImpl::AddFederatedLog(const std::string& json) {
+  VLOG(0) << "*** JSON " << json;
+
+  // const bool is_enabled =
+  //     brave::federated_learning::features::IsFederatedLearningEnabled();
+
+  // VLOG(1) << "*** is_enabled " << is_enabled;
+
+  // const auto data_store_service =
+  //     federated_learning_service_->getDataStoreService();
+  // const auto* ad_notification_timing_data_store =
+  //     data_store_service->getAdNotificationTimingDataStore();
+
+  // TODO(Moritz Haller): Handle types (in FederatedLogs class)
+  if (!json.empty()) {
+    absl::optional<base::Value> serialized_json = base::JSONReader::Read(json);
+    if (serialized_json && serialized_json->is_list()) {
+      if (serialized_json->GetList().empty()) {
+        VLOG(0) << "Failed to load from JSON, list is empty";
+        return;
+      }
+
+      for (auto& item : serialized_json->GetList()) {
+        if (!item.is_dict()) {
+          VLOG(0) << "Failed to load from JSON, item is not of type dict";
+          continue;
+        }
+
+        const std::string* key = item.FindStringPath("key");
+        if (!key) {
+          VLOG(0) << "Failed to load from JSON, key missing or not of type string";
+          continue;
+        }
+
+        const base::Value* value = item.FindPath("value");
+        if (!value) {
+          VLOG(0) << "Failed to load from JSON, value missing";
+          continue;
+        }
+
+        // ----- Create data store log entry
+        // brave::federated_learning::AdNotificationTimingTaskLog log;
+        if (*key == "Clicked") {
+          // TODO(Moritz Haller): Do type check
+          const std::string clicked_value = value->GetString();
+          // log.label = clicked_value;
+          VLOG(0) << "*** log.clicked: " << clicked_value;
+        }
+
+        if (*key == "Country") {
+          // TODO(Moritz Haller): Do type check
+          const std::string country_value = value->GetString();
+          // log.label = country_value;
+          VLOG(0) << "*** log.country: " << country_value;
+        }
+
+        if (*key == "Tabs opened") {
+          // TODO(Moritz Haller): Do type check
+          const std::string tab_opened_value = value->GetString();
+          // log.label = tab_opened_value;
+          VLOG(0) << "*** log.tab_opened: " << tab_opened_value;
+        }
+
+        // ad_notification_timing_data_store
+        //       ->AsyncCall(&brave::federated_learning::AdNotificationTimingDataStore::AddLog)
+        //       .WithArgs(log)
+        //       .Then(base::BindOnce(&AdsServiceImpl::OnAddAdNotificationTimingTaskLog,base::Unretained(this)));
+      }
+    }
+  }
+}
+
+// void AdsServiceImpl::OnAddFederatedLog(bool success) {
+//   VLOG(1) << "*** OnAddFederatedLog success" << success;
+// }
 
 void AdsServiceImpl::Load(const std::string& name, ads::LoadCallback callback) {
   base::PostTaskAndReplyWithResult(

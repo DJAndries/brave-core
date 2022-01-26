@@ -196,6 +196,10 @@ void AdsClientMojoBridge::RecordP2AEvent(const std::string& name,
   ads_client_->RecordP2AEvent(name, type, out_value);
 }
 
+void AdsClientMojoBridge::AddFederatedLog(const std::string& json) {
+  ads_client_->AddFederatedLog(json);
+}
+
 // static
 void AdsClientMojoBridge::OnLoad(CallbackHolder<LoadCallback>* holder,
                                  const bool success,

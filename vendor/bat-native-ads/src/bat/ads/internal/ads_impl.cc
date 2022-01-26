@@ -21,6 +21,8 @@
 #include "bat/ads/internal/account/confirmations/confirmations_state.h"
 #include "bat/ads/internal/account/wallet/wallet_info.h"
 #include "bat/ads/internal/ad_diagnostics/ad_diagnostics.h"
+#include "bat/ads/internal/federated/federated_logs.h"
+#include "bat/ads/internal/federated/log_entries/clicked_federated_logs_entry.h"
 #include "bat/ads/internal/ad_diagnostics/last_unidle_timestamp_ad_diagnostics_entry.h"
 #include "bat/ads/internal/ad_events/ad_events.h"
 #include "bat/ads/internal/ad_server/ad_server.h"
@@ -170,6 +172,16 @@ void AdsImpl::OnHtmlLoaded(const int32_t tab_id,
   ad_transfer_->MaybeTransferAd(tab_id, redirect_chain);
   conversions_->MaybeConvert(redirect_chain, html,
                              conversions_resource_->get());
+
+  // TODO(Moritz Haller): create log entry according to ad event
+  auto clicked_federated_log_entry =
+      std::make_unique<ClickedFederatedLogsEntry>();
+  clicked_federated_log_entry->SetClicked(true);
+  FederatedLogs::Get()->SetFederatedLogsEntry(
+      std::move(clicked_federated_log_entry));
+
+  const std::string json = FederatedLogs::Get()->GetFederatedLogs();
+  AdsClientHelper::Get()->AddFederatedLog(json);
 }
 
 void AdsImpl::OnTextLoaded(const int32_t tab_id,
@@ -570,6 +582,8 @@ void AdsImpl::set(privacy::TokenGeneratorInterface* token_generator) {
   tab_manager_ = std::make_unique<TabManager>();
 
   user_activity_ = std::make_unique<UserActivity>();
+
+  federated_logs_ = std::make_unique<FederatedLogs>();
 }
 
 void AdsImpl::InitializeBrowserManager() {

@@ -51,6 +51,12 @@ namespace base {
 class SequencedTaskRunner;
 }  // namespace base
 
+// namespace brave {
+// namespace federated_learning {
+// class BraveFederatedLearningService;
+// }  // namespace federated_learning
+// }  // namespace brave
+
 namespace brave_rewards {
 class RewardsService;
 }  // namespace brave_rewards
@@ -410,6 +416,9 @@ class AdsServiceImpl : public AdsService,
                       const ads::mojom::P2AEventType type,
                       const std::string& value) override;
 
+  void AddFederatedLog(const std::string& json) override;
+  // void OnAddFederatedLog(bool success);
+
   void WriteDiagnosticLog(const std::string& file,
                           const int line,
                           const int verbose_level,
@@ -495,6 +504,7 @@ class AdsServiceImpl : public AdsService,
 
   NotificationDisplayService* display_service_;     // NOT OWNED
   brave_rewards::RewardsService* rewards_service_;  // NOT OWNED
+  // brave::federated_learning::BraveFederatedLearningService* federated_learning_service_; // NOT OWNED
 
   mojo::AssociatedReceiver<bat_ads::mojom::BatAdsClient>
       bat_ads_client_receiver_;
