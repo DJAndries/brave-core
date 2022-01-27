@@ -97,7 +97,8 @@ reducer.on(WalletActions.initialized, (state: any, payload: WalletInfo) => {
       balance: '',
       accountType: getAccountType(info),
       deviceId: info.hardware ? info.hardware.deviceId : '',
-      tokenBalanceRegistry: {}
+      tokenBalanceRegistry: {},
+      coin: info.coin
     } as WalletAccountType
   })
   const selectedAccount = payload.selectedAccount

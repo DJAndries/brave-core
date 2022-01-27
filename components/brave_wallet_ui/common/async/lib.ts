@@ -181,7 +181,7 @@ export function refreshBalances (currentNetwork: BraveWallet.EthereumChain) {
     await dispatch(WalletActions.setVisibleTokensInfo(visibleTokens))
 
     const getBalanceReturnInfos = await Promise.all(accounts.map(async (account) => {
-      const balanceInfo = await jsonRpcService.getBalance(account.address, BraveWallet.CoinType.ETH)
+      const balanceInfo = await jsonRpcService.getBalance(account.address, account.coin)
       return balanceInfo
     }))
     await dispatch(WalletActions.nativeAssetBalancesUpdated({
