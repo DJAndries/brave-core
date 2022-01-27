@@ -19,6 +19,21 @@ BraveVPNPanelController::BraveVPNPanelController(BraveBrowserView* browser_view)
 BraveVPNPanelController::~BraveVPNPanelController() = default;
 
 void BraveVPNPanelController::ShowBraveVPNPanel() {
+  // TODO:
+  // 1.  SetPurchasedState(PurchasedState::LOADING);
+  // 2.  get reference to SKU keyed service
+  // 3.  call skus_service_->CredentialSummary
+  // 4.  if error (ex: server down), SetPurchasedState(PurchasedState::FAILED);
+  // 5a. if active = false:
+  //    - look at expiration date (see spec for example response)
+  //        if expired, SetPurchasedState(PurchasedState::EXPIRED);
+  //    - if not expired, SetPurchasedState(PurchasedState::NOT_PURCHASED);
+  // 5b. if active = true:
+  //    - SetPurchasedState(PurchasedState::PURCHASED);
+  //
+  // see src/brave/components/brave_vpn/brave_vpn_service_desktop.cc
+  LOG(ERROR) << "BSC]] ShowBraveVPNPanel";
+
   auto* anchor_view = browser_view_->GetAnchorViewForBraveVPNPanel();
   if (!anchor_view)
     return;

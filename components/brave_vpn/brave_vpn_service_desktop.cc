@@ -491,9 +491,13 @@ void BraveVpnServiceDesktop::LoadPurchasedState() {
     return;
   }
 
-  EnsureMojoConnected();
+  // Set UI state to loading while we wait for the data
+  // NOTE: this should be done EARLIER when calling `credential_summary`
+  // see TODO notes in src/brave/browser/ui/views/toolbar/brave_vpn_panel_controller.cc
+  SetPurchasedState(PurchasedState::LOADING);
 
   // if a credential is ready, we can present it
+  EnsureMojoConnected();
   skus_service_->PrepareCredentialsPresentation(
       skus::GetDomain("vpn"), "*",
       base::BindOnce(&BraveVpnServiceDesktop::OnPrepareCredentialsPresentation,

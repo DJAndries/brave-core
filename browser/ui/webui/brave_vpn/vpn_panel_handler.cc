@@ -17,14 +17,21 @@ VPNPanelHandler::~VPNPanelHandler() = default;
 
 void VPNPanelHandler::ShowUI() {
   auto embedder = webui_controller_->embedder();
+  // TODO(bsclifton): trigger a loading state for the panel?
+  // how to reach the VPN service to call `SetPurchasedState`?
+  // can this call methods using the receiver?
   if (embedder) {
+    LOG(ERROR) << "BSC]] ShowUI";
     embedder->ShowUI();
   }
 }
 
 void VPNPanelHandler::CloseUI() {
+  // NOTE(bsclifton): this never seems to get called
+  LOG(ERROR) << "BSC]] CloseUI 1";
   auto embedder = webui_controller_->embedder();
   if (embedder) {
+    LOG(ERROR) << "BSC]] CloseUI 2";
     embedder->CloseUI();
   }
 }
