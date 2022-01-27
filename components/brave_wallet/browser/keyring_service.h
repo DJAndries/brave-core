@@ -15,6 +15,7 @@
 #include "base/values.h"
 #include "brave/components/brave_wallet/browser/hd_keyring.h"
 #include "brave/components/brave_wallet/browser/password_encryptor.h"
+#include "brave/components/brave_wallet/common/brave_wallet.mojom-forward.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 #include "brave/components/brave_wallet/common/brave_wallet_types.h"
 #include "components/keyed_service/core/keyed_service.h"
@@ -197,7 +198,7 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
 
   void AddAccountsWithDefaultName(size_t number);
 
-  bool IsLocked() const;
+  bool IsLocked(const std::string& keyring_id = mojom::kDefaultKeyringId) const;
   bool HasPendingUnlockRequest() const;
   void RequestUnlock();
   absl::optional<std::string> GetSelectedAccount() const;

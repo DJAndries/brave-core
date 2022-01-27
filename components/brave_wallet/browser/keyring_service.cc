@@ -516,7 +516,7 @@ HDKeyring* KeyringService::CreateKeyring(const std::string& keyring_id,
 }
 
 void KeyringService::RequestUnlock() {
-  DCHECK(IsLocked());
+  DCHECK(IsLocked(mojom::kDefaultKeyringId));
   request_unlock_pending_ = true;
 }
 
@@ -622,7 +622,7 @@ mojom::KeyringInfoPtr KeyringService::GetKeyringInfoSync(
   mojom::KeyringInfoPtr keyring_info = mojom::KeyringInfo::New();
   keyring_info->id = keyring_id;
   keyring_info->is_default_keyring_created = IsKeyringCreated(keyring_id);
-  keyring_info->is_locked = IsLocked();
+  keyring_info->is_locked = IsLocked(keyring_id);
   bool backup_complete = false;
   const base::Value* value =
       GetPrefForKeyring(prefs_, kBackupComplete, keyring_id);
@@ -686,7 +686,7 @@ void KeyringService::RestoreWallet(const std::string& mnemonic,
 
 const std::string KeyringService::GetMnemonicForKeyringImpl(
     const std::string& keyring_id) {
-  if (IsLocked()) {
+  if (IsLocked(keyring_id)) {
     VLOG(1) << __func__ << ": Must Unlock service first";
     return std::string();
   }
@@ -1257,8 +1257,8 @@ void KeyringService::AddAccountsWithDefaultName(size_t number) {
   }
 }
 
-bool KeyringService::IsLocked() const {
-  auto it = encryptors_.find(mojom::kDefaultKeyringId);
+bool KeyringService::IsLocked(const std::string& keyring_id) const {
+  auto it = encryptors_.find(keyring_id);
   return (it == encryptors_.end()) || (it->second.get() == nullptr);
 }
 
@@ -1275,7 +1275,7 @@ absl::optional<std::string> KeyringService::GetSelectedAccount() const {
 }
 
 void KeyringService::Lock() {
-  if (IsLocked())
+  if (IsLocked(mojom::kDefaultKeyringId))
     return;
 
   keyrings_.clear();
@@ -1346,7 +1346,7 @@ void KeyringService::OnAutoLockFired() {
 }
 
 void KeyringService::IsLocked(IsLockedCallback callback) {
-  std::move(callback).Run(IsLocked());
+  std::move(callback).Run(IsLocked(mojom::kDefaultKeyringId));
 }
 
 void KeyringService::Reset(bool notify_observer) {
