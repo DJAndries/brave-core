@@ -204,7 +204,7 @@ class BraveWalletProviderImpl final
   // KeyringServiceObserver
   void KeyringCreated(const std::string& keyring_id) override {}
   void KeyringRestored(const std::string& keyring_id) override {}
-  void KeyringReset(const std::string& keyring_id) override {}
+  void KeyringReset() override {}
   void Locked() override;
   void Unlocked() override;
   void BackedUp() override {}

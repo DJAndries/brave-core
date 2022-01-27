@@ -870,7 +870,7 @@ void EthTxService::KeyringRestored(const std::string& keyring_id) {
   UpdatePendingTransactions();
 }
 
-void EthTxService::KeyringReset(const std::string& keyring_id) {
+void EthTxService::KeyringReset() {
   UpdatePendingTransactions();
 }
 

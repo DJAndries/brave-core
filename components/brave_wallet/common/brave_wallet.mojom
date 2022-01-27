@@ -332,7 +332,7 @@ interface KeyringServiceObserver {
   KeyringRestored(string keyring_id);
 
   // Fired when a keyring is reset
-  KeyringReset(string keyring_id);
+  KeyringReset();
 
   // Fired when a keyring is locked
   Locked();

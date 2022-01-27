@@ -795,7 +795,7 @@ void BraveWalletService::Reset() {
   CancelAllSignMessageCallbacks();
 
   if (keyring_service_)
-    keyring_service_->Reset(mojom::kDefaultKeyringId);
+    keyring_service_->Reset();
 }
 
 }  // namespace brave_wallet
